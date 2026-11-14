@@ -1,0 +1,16 @@
+# 忽略构建产物与本地配置
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# 本地工具链（JDK / Gradle / SDK，约 450 MB，绝不入库）
+.tools/
+.kotlin/
+captures/
+*.apk.idsig
+
+# 音频资源是构建产物，但需要打包进 APK，因此保留在 assets 下
+# 如需重新生成，运行 tools/build_audio.py

@@ -1,0 +1,68 @@
+package com.alex.pinyinzoo
+
+import android.Manifest
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
+import android.util.Log
+import com.alex.pinyinzoo.logic.PitchAnalyzer
+import com.alex.pinyinzoo.logic.PronunciationScorer
+import com.alex.pinyinzoo.model.Tone
+import org.junit.Test
+
+/**
+ * 真机录音诊断（只在手动触发时运行，不进入单元测试流程）。
+ *
+ * 用途：在真实设备上验证 AudioRecord 能采到数据、基频能算出来、评分能给出结果。
+ * 用法：
+ *   adb shell am instrument -w -e class com.alex.pinyinzoo.RecorderDiagTest \
+ *       com.alex.pinyinzoo.test/androidx.test.runner.AndroidJUnitRunner
+ *
+ * 注意：本文件依赖 androidTest 环境，当前项目未引入 androidTest 依赖，
+ * 因此本文件仅作为手动验证时的参考实现保留，编译时不会被包含。
+ */
+class RecorderDiagTest {
+
+    @Test
+    fun diag() {
+        val sr = 16000
+        val minBuf = AudioRecord.getMinBufferSize(
+            sr, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT
+        )
+        Log.i("RecDiag", "minBufferSize=$minBuf")
+
+        val rec = AudioRecord(
+            MediaRecorder.AudioSource.MIC, sr,
+            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, minBuf * 2
+        )
+        if (rec.state != AudioRecord.STATE_INITIALIZED) {
+            Log.e("RecDiag", "AudioRecord 初始化失败")
+            return
+        }
+        val total = sr * 2
+        val buf = ShortArray(total)
+        rec.startRecording()
+        var got = 0
+        while (got < total) {
+            val n = rec.read(buf, got, total - got)
+            if (n <= 0) break
+            got += n
+        }
+        rec.stop()
+        rec.release()
+
+        var peak = 0
+        for (v in buf) {
+            val a = kotlin.math.abs(v.toInt())
+            if (a > peak) peak = a
+        }
+        Log.i("RecDiag", "采到 $got 样本，峰值 $peak")
+
+        val c = PitchAnalyzer.contour(buf)
+        Log.i("RecDiag", "轮廓=${c?.joinToString(" ") { "%.2f".format(it) } ?: "null"}")
+        if (c != null) {
+            val r = PronunciationScorer.score(buf, Tone.T1)
+            Log.i("RecDiag", "评分 total=${r.total} tone=${r.toneScore} detected=${r.detectedTone}")
+        }
+    }
+}

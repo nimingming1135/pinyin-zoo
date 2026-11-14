@@ -1,0 +1,50 @@
+{
+ "tone1_0.wav": {
+  "tone": 1,
+  "src": "shen1.mp3"
+ },
+ "tone1_1.wav": {
+  "tone": 1,
+  "src": "chong1.mp3"
+ },
+ "tone1_2.wav": {
+  "tone": 1,
+  "src": "tuan1.mp3"
+ },
+ "tone2_0.wav": {
+  "tone": 2,
+  "src": "zhai2.mp3"
+ },
+ "tone2_1.wav": {
+  "tone": 2,
+  "src": "nian2.mp3"
+ },
+ "tone2_2.wav": {
+  "tone": 2,
+  "src": "fu2.mp3"
+ },
+ "tone3_0.wav": {
+  "tone": 3,
+  "src": "ruan3.mp3"
+ },
+ "tone3_1.wav": {
+  "tone": 3,
+  "src": "wan3.mp3"
+ },
+ "tone3_2.wav": {
+  "tone": 3,
+  "src": "han3.mp3"
+ },
+ "tone4_0.wav": {
+  "tone": 4,
+  "src": "run4.mp3"
+ },
+ "tone4_1.wav": {
+  "tone": 4,
+  "src": "yong4.mp3"
+ },
+ "tone4_2.wav": {
+  "tone": 4,
+  "src": "nong4.mp3"
+ }
+}
